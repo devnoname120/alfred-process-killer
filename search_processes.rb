@@ -6,9 +6,9 @@ class String
 
     def removeaccents
       self
-        .unicode_normalize(:nfd) # Decompose characters
+        .unicode_normalize(:nfkd) # Decompose characters by compatible equivalence
         .tr(COMBINING_DIACRITICS, '')
-        .unicode_normalize(:nfc) # Recompose characters
+        .unicode_normalize(:nfkc) # Recompose characters
     end
 end
 
@@ -59,17 +59,17 @@ processes.first(20).each do | process |
     end
     # Search for an application bundle in the path to the process.
     iconValue = processPath.match(/.*?\.app\//)
-    
+
     # The icon type sent to Alfred is 'fileicon' (taken from a file). This assumes that a .app was found.
     iconType = "fileicon"
-    
+
     # If no .app was found, use OS X's generic 'executable binary' icon.
     # An empty icon type tells Alfred to load the icon from the file itself, rather than loading the file type's icon.
     if !iconValue
       iconValue = "/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/ExecutableBinaryIcon.icns"
       iconType = ""
     end
-    
+
     # Assemble this item's XML string for Alfred. See http://www.alfredforum.com/topic/5-generating-feedback-in-workflows/
     thisXmlString = "\t<item uid=\"#{processName}\" arg=\"#{processId}\">
       <title>#{processName}#{matchedArgs.join(" ")}</title>
